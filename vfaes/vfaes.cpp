@@ -8,28 +8,35 @@
 
 
 
-int main()
+int main(int argc, char** argv)
 {
 	Random::initialise_random();
 
-	int128 nonce = Key::create_random_nonce();
 
-	Parameters parameters("very secure key", nonce);
+	Parameters parameters(argc, argv);
+	parameters.check();
+	parameters.finalise();
 
-	Encrypter::initialise_encrypter(parameters);
+	switch (parameters.get_mode()) {
 
-	{
-		Encrypter e("test.png");
+	case Modes::file_encrypt :
+		{
+		Encrypter::initialise_encrypter(parameters);
+		Encrypter e(parameters);
 		e.encrypt(0);
 		e.save(parameters);
-	}
+		break;
+		}
 
-	Decrypter::initialise_decrypter(parameters);
-	
-	{
-		Decrypter e("test.png.vfaesd");
+	case Modes::file_decrypt:
+		{
+		Decrypter::initialise_decrypter(parameters);
+		Decrypter e(parameters);
 		e.decrypt(0);
 		e.save(parameters);
+		break;
+		}
+
 	}
 
 	return 0;

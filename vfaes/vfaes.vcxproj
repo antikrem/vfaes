@@ -159,6 +159,7 @@
     <MASM Include="encrypt_sub.asm" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="command_parse.hpp" />
     <ClInclude Include="decrypter.hpp" />
     <ClInclude Include="encrypt.h" />
     <ClInclude Include="encrypter.hpp" />
