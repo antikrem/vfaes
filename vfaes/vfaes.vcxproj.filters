@@ -55,5 +55,8 @@
     <ClInclude Include="modes.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="command_parse.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
