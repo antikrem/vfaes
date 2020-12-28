@@ -56,7 +56,7 @@ public:
 		fileStream.read((char*)(body + 1), length);
 		fileStream.close();
 
-	//	remove(this->name.c_str());
+		remove(this->name.c_str());
 	}
 
 	void encrypt(size_t offset) {
