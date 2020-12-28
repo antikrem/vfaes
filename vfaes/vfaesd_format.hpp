@@ -54,9 +54,15 @@ namespace VFAESD {
 	// Block offset for encrypted data
 	const size_t ENCRYPTED_DATA_BLOCK_OFFSET = 4;
 
-	// checks if string has a VFAESD_SUFFIX
-	static bool ends_vsfed(std::string str) {
+	// Checks if string has a VFAESD_SUFFIX
+	static bool check_vsfed_end(const std::string& str) {
+		return str.size() > VFAESD::VFAESD_SUFFIX.size()
+				&& str.substr(str.size() - VFAESD::VFAESD_SUFFIX.size(), VFAESD::VFAESD_SUFFIX.size()) == VFAESD::VFAESD_SUFFIX;
+	}
 
+	// Removes VFAESD_SUFFIX, no error checking
+	static std::string remove_vsfed_end(const std::string& str) {
+		return str.substr(0, str.size() - VFAESD::VFAESD_SUFFIX.size());
 	}
 }
 
