@@ -1,15 +1,14 @@
 
 PUBLIC initialise_encryption_env
-PUBLIC encrypt
 PUBLIC initialise_decryption_env
-PUBLIC decrypt
+PUBLIC encrypt_enb
+PUBLIC decrypt_enb
+PUBLIC encrypt_ctr
 
 EXTERN puts:PROC
 
 .data
 
-    hello1 db "Hello from ASM.",0
-	
 	nonce  OWORD    0                  ; Keeps 128bit nonce
 
 	key0   OWORD	0                  ; Keeps 128bit key from first pass
@@ -29,7 +28,10 @@ EXTERN puts:PROC
 .code
 
 ; Generates a new key from last round key and AESKEYGENASSIST
-; Generally: for this to generate key_n, xmm0 must contain key_{n-1}
+; Generally: for this to generate key_n, 
+; xmm0 must contain key_{n-1}
+; xmm2 has not been changed from last round (or is clears for initial round)
+; No special requirements for xmm1
 generate_key_ninverse MACRO rcon, dest
     aeskeygenassist xmm1, xmm0, rcon   ; Create key assist and keep in xmm1
 
@@ -49,7 +51,11 @@ generate_key_ninverse MACRO rcon, dest
 
 ENDM
 
-; Generally: for this to generate key_n, xmm0 must contain key_{n-1}
+; Generates a new key from last round key and AESKEYGENASSIST
+; Generally: for this to generate key_n, 
+; xmm0 must contain key_{n-1}
+; xmm2 has not been changed from last round (or is clears for initial round)
+; No special requirements for xmm1
 generate_key_inverse MACRO rcon, dest
     aeskeygenassist xmm1, xmm0, rcon   ; Create key assist and keep in xmm1
 
@@ -120,11 +126,11 @@ initialise_encryption_env PROC
 initialise_encryption_env ENDP
 
 
-; Procedure for encrypting a 128 bit block using AES in CTR mode
-; Called with function signature void(void* )
+; Procedure for encrypting a 128 bit block using AES in ENB mode
+; Called with function signature void(void*, size_t)
 ; RCX <- Starting address of block
 ; RDX <- Counter for block
-encrypt PROC
+encrypt_enb PROC
     push       rbp
     mov        rbp, rsp
     sub        rsp, 32                 ; Shadow Space
@@ -148,7 +154,7 @@ encrypt PROC
 
     leave                              ; Restore stack (rsp) & frame pointer (rbp)
     ret
-encrypt ENDP
+encrypt_enb ENDP
 
 ; Generates and fills key schedule for decryption
 ; Requires zeroth key to be in xmm0
@@ -201,7 +207,7 @@ initialise_decryption_env ENDP
 
 ; Procedure for decrypting a 128 bit block using AES in CTR mode
 ; Called with function signature void(void*)
-decrypt PROC
+decrypt_enb PROC
     push       rbp
     mov        rbp,     rsp
     sub        rsp,     32             ; Shadow Space
@@ -225,7 +231,39 @@ decrypt PROC
 
     leave                              ; Restore stack (rsp) & frame pointer (rbp)
     ret
-decrypt ENDP
+decrypt_enb ENDP
 
+; Procedure for decrypting and encryping a 128 bit block using AES in CTR mode
+; Called with function signature void(void* )
+; RCX <- Starting address of block
+; RDX <- Counter for block
+encrypt_ctr PROC
+    push       rbp
+    mov        rbp,  rsp
+    sub        rsp,  32                ; Shadow Space
+    and        spl,  -16               ; Align stack at 16
 
+	movdqu     xmm0, nonce             ; Load nonce onto xmm0
+	xorpd      xmm0, xmm0              ; Clear xmm0
+	movq       xmm0, rdx               ; Load counter onto low qword
+	xorpd      xmm0, nonce             ; XOR with nonce
+
+	pxor       xmm0, key0              ; Begin encryption rounds on xmm0
+	aesenc     xmm0, key1
+    aesenc     xmm0, key2
+    aesenc     xmm0, key3
+    aesenc     xmm0, key4
+    aesenc     xmm0, key5
+    aesenc     xmm0, key6
+    aesenc     xmm0, key7
+    aesenc     xmm0, key8
+    aesenc     xmm0, key9
+    aesenclast xmm0, key10
+
+	xorpd     xmm0, [ rcx ]            ; XOR the resulting cypher with the cipher text
+	movdqu   [ rcx ], xmm0             ; Move encrypted block back in place
+
+    leave                              ; Restore stack (rsp) & frame pointer (rbp)
+    ret
+encrypt_ctr ENDP
 END
