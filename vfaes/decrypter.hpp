@@ -53,8 +53,6 @@ public:
 		fileStream.read((char*)&header, 3 * sizeof(int128));
 		fileStream.read((char*)body, realsize);
 		fileStream.close();
-
-		//	remove(this->name.c_str());
 	}
 
 	
@@ -63,6 +61,15 @@ public:
 		decrypt_blocks(realsize, offset, body);
 		memcpy(&eheader, body, sizeof(int128));
 
+		if (!compare_int128_front_bits(body, VFAESD::ENCRYPTED_CHECK_STRING)) {
+			return false;
+		}
+		else {
+			remove(this->name.c_str());
+
+			return true;
+		}
+		
 	}
 
 	void save(const Parameters& parameter) {
