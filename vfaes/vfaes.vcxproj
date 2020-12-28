@@ -152,8 +152,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="encrypt.c" />
+    <ClCompile Include="encryption_manager.cpp" />
+    <ClCompile Include="int128.c" />
+    <ClCompile Include="key.cpp" />
     <ClCompile Include="random.cpp" />
     <ClCompile Include="vfaes.cpp" />
+    <ClCompile Include="vfaesd_format.cpp" />
   </ItemGroup>
   <ItemGroup>
     <MASM Include="encrypt_sub.asm" />
@@ -168,6 +173,7 @@
     <ClInclude Include="modes.hpp" />
     <ClInclude Include="parameters.hpp" />
     <ClInclude Include="random.hpp" />
+    <ClInclude Include="encryption_manager.hpp" />
     <ClInclude Include="vfaesd_format.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

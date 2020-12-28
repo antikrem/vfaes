@@ -8,6 +8,8 @@
 
 #include <string>
 
+#include "int128.h"
+
 /**
  * Format:
  *
@@ -35,7 +37,7 @@ namespace VFAESD {
 	// Block offset for id
 	const size_t ID_BLOCK_OFFSET = 0;
 	// 16 byte identifier
-	const char* UNENCRYPTED_IDENTIFIER = "!VFAES_ENCRYPTED";
+	static const char* const UNENCRYPTED_IDENTIFIER = "!VFAES_ENCRYPTED";
 
 	// Block offset for nonce
 	const size_t NONCE_BLOCK_OFFSET = 1;
@@ -46,7 +48,7 @@ namespace VFAESD {
 
 	// Block offset for encrypted meta data
 	const size_t ENCRYPTED_META_BLOCK_OFFSET = 3;
-	const char* ENCRYPTED_CHECK_STRING = "!SECRET!";
+	const char* const ENCRYPTED_CHECK_STRING = "!SECRET!";
 	// Byte offset within block for original length
 	const size_t LENGTH_BYTE_OFFSET = 8;
 

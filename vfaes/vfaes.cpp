@@ -3,8 +3,7 @@
 
 #include <iostream>
 
-#include "encrypter.hpp"
-#include "decrypter.hpp"
+#include "encryption_manager.hpp"
 
 
 
@@ -17,27 +16,9 @@ int main(int argc, char** argv)
 	parameters.check();
 	parameters.finalise();
 
-	switch (parameters.get_mode()) {
+	EncryptionManager manager(parameters);
+	manager.do_action();
 
-	case Modes::file_encrypt :
-		{
-		Encrypter::initialise_encrypter(parameters);
-		Encrypter e(parameters);
-		e.encrypt(0);
-		e.save(parameters);
-		break;
-		}
-
-	case Modes::file_decrypt:
-		{
-		Decrypter::initialise_decrypter(parameters);
-		Decrypter e(parameters);
-		e.decrypt(0);
-		e.save(parameters);
-		break;
-		}
-
-	}
 
 	return 0;
 }
