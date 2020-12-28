@@ -36,8 +36,8 @@ public:
 		initialise_decryption(parameter.get_key(), parameter.get_nonce());
 	}
 
-	Decrypter(const std::string& name) {
-		this->name = name;
+	Decrypter(const Parameters& parameter) {
+		this->name = parameter.get_target();
 		std::ifstream fileStream(this->name, std::ios::binary);
 
 		// Get real length of file
@@ -57,21 +57,18 @@ public:
 		//	remove(this->name.c_str());
 	}
 
-	void decrypt(size_t offset) {
+	
+
+	bool decrypt(size_t offset) {
 		decrypt_blocks(realsize, offset, body);
 		memcpy(&eheader, body, sizeof(int128));
+
 	}
 
 	void save(const Parameters& parameter) {
-		// Remove suffix if its there
-		std::string outputName = name;
-
-		if (outputName.substr(outputName.size() - VFAESD::VFAESD_SUFFIX.size(), VFAESD::VFAESD_SUFFIX.size()) == VFAESD::VFAESD_SUFFIX) {
-			outputName = outputName.substr(0, outputName.size() - VFAESD::VFAESD_SUFFIX.size());
-		}
 
 		// Write file
-		std::ofstream fileStream("a" + outputName, std::ios::binary);
+		std::ofstream fileStream(parameter.get_output(), std::ios::binary);
 		fileStream.write((char*)body + sizeof(int128), eheader.length);
 		fileStream.close();
 	}
