@@ -36,8 +36,8 @@ public:
 	// Loads the target file onto memory
 	// and pads
 	// Also deletes the original file
-	Encrypter(const std::string& name) {
-		this->name = name;
+	Encrypter(const Parameters& parameter) {
+		this->name = parameter.get_target();
 		std::ifstream fileStream(this->name, std::ios::binary);
 
 		// Get length of file
@@ -76,7 +76,7 @@ public:
 	// Save to file
 	void save(const Parameters& parameter) {
 		// Write file back
-		std::ofstream fileStream(name + VFAESD::VFAESD_SUFFIX, std::ios::binary);
+		std::ofstream fileStream(parameter.get_output(), std::ios::binary);
 
 		// Write unencrypted header
 		int128 unencrypted_block[VFAESD::UNENCRYPTED_BLOCK_SIZE];
