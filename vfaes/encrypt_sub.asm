@@ -122,15 +122,17 @@ initialise_encryption_env ENDP
 
 ; Procedure for encrypting a 128 bit block using AES in CTR mode
 ; Called with function signature void(void* )
+; RCX <- Starting address of block
+; RDX <- Counter for block
 encrypt PROC
-    push rbp
-    mov rbp, rsp
-    sub rsp, 32                        ; Shadow Space
-    and spl, -16                       ; Align stack at 16
+    push       rbp
+    mov        rbp, rsp
+    sub        rsp, 32                 ; Shadow Space
+    and        spl, -16                ; Align stack at 16
 
-	movdqu xmm0, [ rcx ]               ; Load block onto register
+	movdqu     xmm0, [ rcx ]           ; Load block onto register
 
-	pxor  xmm0, key0                   ; 
+	pxor       xmm0, key0              ; Begin encryption rounds on xmm0
 	aesenc     xmm0, key1
     aesenc     xmm0, key2
     aesenc     xmm0, key3
