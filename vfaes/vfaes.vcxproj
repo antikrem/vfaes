@@ -156,6 +156,7 @@
     <ClCompile Include="encryption_manager.cpp" />
     <ClCompile Include="int128.c" />
     <ClCompile Include="key.cpp" />
+    <ClCompile Include="os_kit.cpp" />
     <ClCompile Include="random.cpp" />
     <ClCompile Include="vfaes.cpp" />
     <ClCompile Include="vfaesd_format.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="int128.h" />
     <ClInclude Include="key.hpp" />
     <ClInclude Include="modes.hpp" />
+    <ClInclude Include="os_kit.h" />
     <ClInclude Include="parameters.hpp" />
     <ClInclude Include="random.hpp" />
     <ClInclude Include="encryption_manager.hpp" />
