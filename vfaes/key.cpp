@@ -1,6 +1,6 @@
 #include "key.hpp"
 
-
+#include <sstream>
 
 int128 Key::hash_key(std::string key) {
 
@@ -15,6 +15,15 @@ int128 Key::hash_key(std::string key) {
 	}
 
 	return hash;
+}
+
+std::string Key::convert_key_to_hex_string(int128 block) {
+	std::stringstream ss;
+	for (int i = 0; i < sizeof(int128); ++i) {
+		ss << std::hex << (int)block.data[i];
+	}
+		
+	return ss.str();
 }
 
 int128 Key::create_random_nonce() {

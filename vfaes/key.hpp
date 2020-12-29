@@ -15,6 +15,11 @@ namespace Key {
 	int128 hash_key(std::string key);
 
 	/**
+	 * Takes a block and returns a printable string of hex values
+	 */
+	std::string convert_key_to_hex_string(int128 block);
+
+	/**
 	 * Generates a random nonce
 	 */
 	int128 create_random_nonce();
