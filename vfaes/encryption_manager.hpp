@@ -5,6 +5,8 @@
 #include <map>
 #include <iostream>
 
+#include <chrono> 
+
 #include "encrypter.hpp"
 #include "decrypter.hpp"
 
@@ -19,12 +21,25 @@ class EncryptionManager {
 	// Function ptr to action, set at runtime
 	int(EncryptionManager::*action)()  = nullptr;
 
+	// Stanadrd single file verbose output
+	void standard_single_file_out(size_t blocks, std::string task) {
+		std::cout << "Successfully " << task << " " << parameters.get_target() << " with AES in CTR Mode" << std::endl;
+		std::cout << blocks << " blocks encrypted with key: " << parameters.get_input_key() << std::endl;
+		std::cout << "Hard Key : " << Key::convert_key_to_hex_string(parameters.get_key()) << std::endl;
+		std::cout << "Nonce    : " << Key::convert_key_to_hex_string(parameters.get_nonce()) << std::endl;
+		std::cout << "Output   : " << parameters.get_output() << std::endl;
+	}
+
 private:
 	int single_file_encrypt() {
 		Encrypter::initialise_encrypter(parameters);
 		Encrypter e(parameters);
-		e.encrypt(0);
+		size_t blocks = e.encrypt(0);
 		e.save(parameters);
+
+		if (parameters.get_verbose_mode()) {
+			standard_single_file_out(blocks, "encrypted");
+		}
 
 		return 0;
 	}
@@ -32,12 +47,21 @@ private:
 	int single_file_decrypt() {
 		Decrypter::initialise_decrypter(parameters);
 		Decrypter e(parameters);
-		if (e.decrypt(0)) {
+
+		size_t blocks;
+		if (blocks = e.decrypt(0)) {
 			e.save(parameters);
+
+			if (parameters.get_verbose_mode()) {
+				standard_single_file_out(blocks, "decrypted");
+			}
+
 			return 0;
 		}
 		else {
-			std::cerr << "Invalid key: " << parameters.get_input_key() << " (" << parameters.get_key().data << ")" << std::endl;
+			std::cerr << "Invalid key: " << parameters.get_input_key()
+					<< " (" << Key::convert_key_to_hex_string(parameters.get_key()) 
+					<< ")" << std::endl;
 			return 1;
 		}
 
@@ -53,7 +77,11 @@ public:
 	// Works action and returns exit value
 	int do_action() {
 		
-		return (this->*action)();
+		auto start = std::chrono::high_resolution_clock::now();
+		int result = (this->*action)();
+		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start);
+
+		return result;
 	}
 };
 

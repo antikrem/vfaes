@@ -23,11 +23,17 @@ class Parameters {
 	// Mode for this execution
 	Modes mode = Modes::unset;
 
+	// Input string key
+	std::string intputKey;
+
 	// Key used for encryption
 	int128 key;
 
 	// Nonce used with AES in CTR mode
 	int128 nonce;
+
+	// Verbose mode for printing output
+	bool verboseMode = true;
 
 	// Number of threads used
 	size_t threads = 1;
@@ -40,6 +46,7 @@ public:
 		for (int i = 1; i < argc; i++) {
 			if (std::string(argv[i]) == "-key") {
 				i++;
+				intputKey = std::string(*(argv + i));
 				key = Key::hash_key(*(argv + i));
 			}
 			else {
@@ -98,6 +105,10 @@ public:
 		return mode;
 	}
 
+	std::string get_input_key() const {
+		return intputKey;
+	}
+
 	int128 get_key() const {
 		return key;
 	}
@@ -111,9 +122,12 @@ public:
 		return true;
 	}
 
+	bool get_verbose_mode() const {
+		return verboseMode;
+	}
 };
 
 
 
-#endif // !__KEY_HPP__
+#endif // !__PARAMETERS_HPP__
 
