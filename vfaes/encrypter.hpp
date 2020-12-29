@@ -59,7 +59,8 @@ public:
 		remove(this->name.c_str());
 	}
 
-	void encrypt(size_t offset) {
+	// Returns blocks encrypted
+	size_t encrypt(size_t offset) {
 
 		// Set encrypted block up
 		write_int128(body, VFAESD::ENCRYPTED_CHECK_STRING);
@@ -70,6 +71,8 @@ public:
 		);
 
 		encrypt_blocks(realsize, offset, body);
+
+		return realsize / sizeof(int128);
 
 	}
 
