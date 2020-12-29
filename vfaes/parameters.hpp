@@ -8,6 +8,8 @@
 #include "int128.h"
 #include "random.hpp"
 
+#include "os_kit.h"
+
 #include "key.hpp"
 #include "modes.hpp"
 #include "vfaesd_format.hpp"
@@ -62,6 +64,13 @@ public:
 	bool check() {
 		// Check target set
 		if (!target.size()) {
+			std::cerr << "Target not set" << std::endl;
+			return false;
+		}
+
+		// Check target file exists
+		if (!os_kit::fileExists(target)) {
+			std::cerr << "Target: " << target <<" does not exist" << std::endl;
 			return false;
 		}
 
