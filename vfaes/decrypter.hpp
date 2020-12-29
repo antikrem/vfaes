@@ -57,17 +57,17 @@ public:
 
 	
 
-	bool decrypt(size_t offset) {
+	size_t decrypt(size_t offset) {
 		decrypt_blocks(realsize, offset, body);
 		memcpy(&eheader, body, sizeof(int128));
 
 		if (!compare_int128_front_bits(body, VFAESD::ENCRYPTED_CHECK_STRING)) {
-			return false;
+			return 0;
 		}
 		else {
 			remove(this->name.c_str());
 
-			return true;
+			return realsize / sizeof(int128);
 		}
 		
 	}
