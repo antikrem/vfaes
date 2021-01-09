@@ -1,11 +1,9 @@
-
+; Contains implementation of the following functions:
 PUBLIC initialise_encryption_env
 PUBLIC initialise_decryption_env
 PUBLIC encrypt_enb
 PUBLIC decrypt_enb
 PUBLIC encrypt_ctr
-
-EXTERN puts:PROC
 
 .data
 
@@ -14,7 +12,7 @@ EXTERN puts:PROC
 	key0   OWORD	0                  ; Keeps 128bit key from first pass
 	                                   ; Rest is the key schedule
 
-    key1   OWORD	0 
+    key1   OWORD	0                  ; Each key has allocated space
 	key2   OWORD	0 
 	key3   OWORD	0 
 	key4   OWORD	0 
