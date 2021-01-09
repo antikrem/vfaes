@@ -90,4 +90,4 @@ public:
 
 
 
-#endif // !__ENCRYPTER_HPP__
+#endif // !__DECRYPTER_HPP__
