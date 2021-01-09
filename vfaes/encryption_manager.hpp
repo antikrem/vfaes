@@ -21,6 +21,29 @@ class EncryptionManager {
 	// Function ptr to action, set at runtime
 	int(EncryptionManager::*action)()  = nullptr;
 
+	// Times for different events
+	std::chrono::microseconds readDuration = std::chrono::microseconds(0);
+	std::chrono::microseconds encryptDuration = std::chrono::microseconds(0);
+	std::chrono::microseconds writeDuration = std::chrono::microseconds(0);
+
+	// Internal start timer
+	std::chrono::time_point<std::chrono::high_resolution_clock> start;
+
+	// Set start
+	void set_start() {
+		start = std::chrono::high_resolution_clock::now();
+	}
+
+	// Returns duration from last start
+	std::chrono::microseconds since_start() {
+		return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start);
+	}
+
+	// Converts a count of blocks and 
+	double convert_mebabytes_per_second(size_t blocks, std::chrono::microseconds time) {
+		return (double)(blocks * 16) / time.count();
+	}
+
 	// Stanadrd single file verbose output
 	void standard_single_file_out(size_t blocks, std::string task) {
 		std::cout << "Successfully " << task << " " << parameters.get_target() << " with AES in CTR Mode" << std::endl;
@@ -28,14 +51,26 @@ class EncryptionManager {
 		std::cout << "Hard Key : " << Key::convert_key_to_hex_string(parameters.get_key()) << std::endl;
 		std::cout << "Nonce    : " << Key::convert_key_to_hex_string(parameters.get_nonce()) << std::endl;
 		std::cout << "Output   : " << parameters.get_output() << std::endl;
+		std::cout << "Read     : " << convert_mebabytes_per_second(blocks, readDuration) << " MB/s" << std::endl;
+		std::cout << "Encrypt  : " << convert_mebabytes_per_second(blocks, encryptDuration) << " MB/s" << std::endl;
+		std::cout << "save     : " << convert_mebabytes_per_second(blocks, writeDuration) << " MB/s" << std::endl;
 	}
 
 private:
 	int single_file_encrypt() {
 		Encrypter::initialise_encrypter(parameters);
+
+		set_start();
 		Encrypter e(parameters);
+		readDuration += since_start();
+
+		set_start();
 		size_t blocks = e.encrypt(0);
+		encryptDuration += since_start();
+
+		set_start();
 		e.save(parameters);
+		writeDuration += since_start();
 
 		if (parameters.get_verbose_mode()) {
 			standard_single_file_out(blocks, "encrypted");
@@ -46,11 +81,19 @@ private:
 
 	int single_file_decrypt() {
 		Decrypter::initialise_decrypter(parameters);
-		Decrypter e(parameters);
 
+		set_start();
+		Decrypter e(parameters);
+		readDuration += since_start();
+
+		set_start();
 		size_t blocks;
 		if (blocks = e.decrypt(0)) {
+			encryptDuration += since_start();
+
+			set_start();
 			e.save(parameters);
+			writeDuration += since_start();
 
 			if (parameters.get_verbose_mode()) {
 				standard_single_file_out(blocks, "decrypted");
@@ -77,9 +120,9 @@ public:
 	// Works action and returns exit value
 	int do_action() {
 		
-		auto start = std::chrono::high_resolution_clock::now();
+		
 		int result = (this->*action)();
-		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start);
+		
 
 		return result;
 	}
