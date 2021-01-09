@@ -11,9 +11,13 @@ int main(int argc, char** argv)
 {
 	Random::initialise_random();
 
+	std::ios::sync_with_stdio(false);
 
 	Parameters parameters(argc, argv);
-	parameters.check();
+	
+	if (!parameters.check()) {
+		return 1;
+	}
 	parameters.finalise();
 
 	EncryptionManager manager(parameters);
