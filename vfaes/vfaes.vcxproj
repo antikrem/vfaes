@@ -171,6 +171,7 @@
     <ClInclude Include="encrypter.hpp" />
     <ClInclude Include="int128.h" />
     <ClInclude Include="key.hpp" />
+    <ClInclude Include="memmap.h" />
     <ClInclude Include="modes.hpp" />
     <ClInclude Include="os_kit.h" />
     <ClInclude Include="parameters.hpp" />

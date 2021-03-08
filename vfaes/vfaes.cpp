@@ -21,8 +21,6 @@ int main(int argc, char** argv)
 	parameters.finalise();
 
 	EncryptionManager manager(parameters);
-	manager.do_action();
-
-
-	return 0;
+	
+	return manager.do_action();
 }
