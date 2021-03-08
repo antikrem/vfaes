@@ -70,7 +70,7 @@ public:
 
 		// Check target file exists
 		if (!os_kit::fileExists(target)) {
-			std::cerr << "Target: " << target <<" does not exist" << std::endl;
+			std::cerr << "Target: " << target << " does not exist" << std::endl;
 			return false;
 		}
 
