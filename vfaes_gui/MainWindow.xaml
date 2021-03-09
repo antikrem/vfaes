@@ -33,11 +33,12 @@
             <Image Name="Dragimage" Margin="10"/>
         </StackPanel>
 
-        <StackPanel Name="RequestQueueView" 
-                    Grid.Row="2" Grid.ColumnSpan="2"
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      Grid.Row="2" Grid.ColumnSpan="2">
+            <StackPanel Name="RequestQueueView" 
                     Drop="DragStackPanel_Drop" AllowDrop="true"
-                    Background="Gray">
-        </StackPanel>
+                    Background="Gray"/>
+        </ScrollViewer>
 
     </Grid>
 </Window>
