@@ -3,6 +3,7 @@
 #include <random>
 #include <mutex>
 
+#pragma warning(disable : 4834)
 
 std::default_random_engine randgen;
 std::uniform_int_distribution<int> dist(0, 255);
