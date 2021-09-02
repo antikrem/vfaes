@@ -12,7 +12,7 @@ PUBLIC encrypt_ctr
 	key0   OWORD	0                  ; Keeps 128bit key from first pass
 	                                   ; Rest is the key schedule
 
-    key1   OWORD	0                  ; Each key has allocated space
+	key1   OWORD	0                  ; Each key has allocated space
 	key2   OWORD	0 
 	key3   OWORD	0 
 	key4   OWORD	0 
@@ -31,7 +31,7 @@ PUBLIC encrypt_ctr
 ; xmm2 has not been changed from last round (or is clears for initial round)
 ; No special requirements for xmm1
 generate_key_ninverse MACRO rcon, dest
-    aeskeygenassist xmm1, xmm0, rcon   ; Create key assist and keep in xmm1
+	aeskeygenassist xmm1, xmm0, rcon   ; Create key assist and keep in xmm1
 
 	pshufd xmm1, xmm1, 11111111b
 
@@ -55,7 +55,7 @@ ENDM
 ; xmm2 has not been changed from last round (or is clears for initial round)
 ; No special requirements for xmm1
 generate_key_inverse MACRO rcon, dest
-    aeskeygenassist xmm1, xmm0, rcon   ; Create key assist and keep in xmm1
+	aeskeygenassist xmm1, xmm0, rcon   ; Create key assist and keep in xmm1
 
 	pshufd xmm1, xmm1, 11111111b
 
@@ -78,7 +78,7 @@ ENDM
 ; Requires zeroth key to be in xmm0
 generate_key_encrypt_schdule PROC
 	push rbp
-    mov rbp, rsp
+	mov rbp, rsp
 	 
 	movaps xmm0, key0                  ; Set xmm0 to be starting key
 	pxor xmm2, xmm2                    ; Clear xmm2                         
@@ -95,7 +95,7 @@ generate_key_encrypt_schdule PROC
 	generate_key_ninverse 54,  key10
 
 	leave
-    ret
+	ret
 generate_key_encrypt_schdule ENDP
 
 
@@ -104,10 +104,10 @@ generate_key_encrypt_schdule ENDP
 ; Sets nonce and inkey in data segment
 ; Also generates all key rows in data segment
 initialise_encryption_env PROC
-    push rbp
-    mov rbp, rsp
-    sub rsp, 32                        ; Shadow Space
-    and spl, -16                       ; Align stack at 16
+	push rbp
+	mov rbp, rsp
+	sub rsp, 32                        ; Shadow Space
+	and spl, -16                       ; Align stack at 16
 	
 	movdqu xmm0, [ rcx ]	           ; Move second parameter to temporary registar (128 bits)
 	movdqu key0, xmm0                  ; Move temporary registar to key0 (128 bits)
@@ -129,36 +129,36 @@ initialise_encryption_env ENDP
 ; RCX <- Starting address of block
 ; RDX <- Counter for block
 encrypt_enb PROC
-    push       rbp
-    mov        rbp, rsp
-    sub        rsp, 32                 ; Shadow Space
-    and        spl, -16                ; Align stack at 16
+	push       rbp
+	mov        rbp, rsp
+	sub        rsp, 32                 ; Shadow Space
+	and        spl, -16                ; Align stack at 16
 
 	movdqu     xmm0, [ rcx ]           ; Load block onto register
 
 	pxor       xmm0, key0              ; Begin encryption rounds on xmm0
 	aesenc     xmm0, key1
-    aesenc     xmm0, key2
-    aesenc     xmm0, key3
-    aesenc     xmm0, key4
-    aesenc     xmm0, key5
-    aesenc     xmm0, key6
-    aesenc     xmm0, key7
-    aesenc     xmm0, key8
-    aesenc     xmm0, key9
-    aesenclast xmm0, key10
+	aesenc     xmm0, key2
+	aesenc     xmm0, key3
+	aesenc     xmm0, key4
+	aesenc     xmm0, key5
+	esenc     xmm0, key6
+	aesenc     xmm0, key7
+	aesenc     xmm0, key8
+	aesenc     xmm0, key9
+	aesenclast xmm0, key10
 
 	movdqu [ rcx ], xmm0
 
-    leave                              ; Restore stack (rsp) & frame pointer (rbp)
-    ret
+	leave                              ; Restore stack (rsp) & frame pointer (rbp)
+	ret
 encrypt_enb ENDP
 
 ; Generates and fills key schedule for decryption
 ; Requires zeroth key to be in xmm0
 generate_key_decrypt_schdule PROC
 	push rbp
-    mov rbp, rsp
+	mov rbp, rsp
 	 
 	movaps xmm0, key0                  ; Set xmm0 to be starting key
 	pxor xmm2, xmm2                    ; Clear xmm2                         
@@ -175,7 +175,7 @@ generate_key_decrypt_schdule PROC
 	generate_key_ninverse 54,  key10
 
 	leave
-    ret
+	ret
 generate_key_decrypt_schdule ENDP
 
 
@@ -184,10 +184,10 @@ generate_key_decrypt_schdule ENDP
 ; Sets nonce and inkey in data segment
 ; Also generates all key rows in data segment
 initialise_decryption_env PROC
-    push rbp
-    mov rbp, rsp
-    sub rsp, 32                        ; Shadow Space
-    and spl, -16                       ; Align stack at 16
+	push rbp
+	mov rbp, rsp
+	sub rsp, 32                        ; Shadow Space
+	and spl, -16                       ; Align stack at 16
 	
 	movdqu xmm0, [ rcx ]	           ; Move second parameter to temporary registar (128 bits)
 	movdqu key0, xmm0                  ; Move temporary registar to key0 (128 bits)
@@ -199,36 +199,36 @@ initialise_decryption_env PROC
 	call generate_key_decrypt_schdule  ; Call generate_key_encrypt_schdule to populate the schedule
    
 	leave                              ; Restore and return
-    ret
+	ret
 
 initialise_decryption_env ENDP
 
 ; Procedure for decrypting a 128 bit block using AES in CTR mode
 ; Called with function signature void(void*)
 decrypt_enb PROC
-    push       rbp
-    mov        rbp,     rsp
-    sub        rsp,     32             ; Shadow Space
-    and        spl,     -16            ; Align stack at 16
+	push       rbp
+	mov        rbp,     rsp
+	sub        rsp,     32             ; Shadow Space
+	and        spl,     -16            ; Align stack at 16
 
 	movdqu     xmm0,    [ rcx ]        ; Load block onto register
 
 	pxor       xmm0,    key10          ; 
 	aesdec     xmm0,    key9
-    aesdec     xmm0,    key8
-    aesdec     xmm0,    key7
-    aesdec     xmm0,    key6
-    aesdec     xmm0,    key5
-    aesdec     xmm0,    key4
-    aesdec     xmm0,    key3
-    aesdec     xmm0,    key2
-    aesdec     xmm0,    key1
-    aesdeclast xmm0,    key0
+	aesdec     xmm0,    key8
+	aesdec     xmm0,    key7
+	aesdec     xmm0,    key6
+	aesdec     xmm0,    key5
+	aesdec     xmm0,    key4
+	aesdec     xmm0,    key3
+	aesdec     xmm0,    key2
+	aesdec     xmm0,    key1
+	aesdeclast xmm0,    key0
 
 	movdqu     [ rcx ], xmm0
 
-    leave                              ; Restore stack (rsp) & frame pointer (rbp)
-    ret
+	leave                              ; Restore stack (rsp) & frame pointer (rbp)
+	ret
 decrypt_enb ENDP
 
 ; Procedure for decrypting and encryping a 128 bit block using AES in CTR mode
@@ -236,10 +236,10 @@ decrypt_enb ENDP
 ; RCX <- Starting address of block
 ; RDX <- Counter for block
 encrypt_ctr PROC
-    push       rbp
-    mov        rbp,  rsp
-    sub        rsp,  32                ; Shadow Space
-    and        spl,  -16               ; Align stack at 16
+	push       rbp
+	mov        rbp,  rsp
+	sub        rsp,  32                ; Shadow Space
+	and        spl,  -16               ; Align stack at 16
 
 	movdqu     xmm0, nonce             ; Load nonce onto xmm0
 	xorpd      xmm0, xmm0              ; Clear xmm0
@@ -248,20 +248,21 @@ encrypt_ctr PROC
 
 	pxor       xmm0, key0              ; Begin encryption rounds on xmm0
 	aesenc     xmm0, key1
-    aesenc     xmm0, key2
-    aesenc     xmm0, key3
-    aesenc     xmm0, key4
-    aesenc     xmm0, key5
-    aesenc     xmm0, key6
-    aesenc     xmm0, key7
-    aesenc     xmm0, key8
-    aesenc     xmm0, key9
-    aesenclast xmm0, key10
+	aesenc     xmm0, key2
+	aesenc     xmm0, key3
+	aesenc     xmm0, key4
+	aesenc     xmm0, key5
+	aesenc     xmm0, key6
+	aesenc     xmm0, key7
+	aesenc     xmm0, key8
+	aesenc     xmm0, key9
+	aesenclast xmm0, key10
 
 	xorpd     xmm0, [ rcx ]            ; XOR the resulting cypher with the cipher text
 	movdqu   [ rcx ], xmm0             ; Move encrypted block back in place
 
-    leave                              ; Restore stack (rsp) & frame pointer (rbp)
-    ret
+	leave                              ; Restore stack (rsp) & frame pointer (rbp)
+	ret
 encrypt_ctr ENDP
+
 END
